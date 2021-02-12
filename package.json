@@ -1,5 +1,5 @@
 {
-  "name": "Wiki-API",
+  "name": "Keep-API",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -15,5 +15,8 @@
     "ejs": "^2.6.1",
     "express": "^4.16.4",
     "mongoose": "^5.11.0"
+  },
+  "engines": {
+    "node": "15.6.0"
   }
 }
