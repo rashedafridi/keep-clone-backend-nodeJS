@@ -3,6 +3,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require('mongoose');
+// const dotenv = require('dotenv')
+require('dotenv').config();
 
 const app = express();
 
@@ -12,8 +14,9 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(express.static("public"));
+const datasbasURL= process.env.DBURL || 'mongodb://localhost:27017/keepDB';
 
-mongoose.connect("mongodb://localhost:27017/wikiDB", {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect(datasbasURL, {useNewUrlParser: true, useUnifiedTopology: true});
 
 const articleSchema = {
   title: String,
@@ -66,11 +69,11 @@ app.route("/articles")
 
 ////////////////////////////////Requests Targetting A Specific Article////////////////////////
 
-app.route("/articles/:articleTitle")
+app.route("/articles/:ID")
 
 .get(function(req, res){
 
-  Article.findOne({title: req.params.articleTitle}, function(err, foundArticle){
+  Article.findOne({title: req.params.ID}, function(err, foundArticle){
     if (foundArticle) {
       res.send(foundArticle);
     } else {
@@ -79,24 +82,11 @@ app.route("/articles/:articleTitle")
   });
 })
 
-.put(function(req, res){
-
-  Article.update(
-    {title: req.params.articleTitle},
-    {title: req.body.title, content: req.body.content},
-    {overwrite: true},
-    function(err){
-      if(!err){
-        res.send("Successfully updated the selected article.");
-      }
-    }
-  );
-})
 
 // .patch(function(req, res){
 
 //   Article.updateOne(
-//     {title: req.params.articleTitle},
+//     {title: req.params.ID},
 //     {$set: req.body},
 //     function(err){
 //       if(!err){
@@ -111,7 +101,7 @@ app.route("/articles/:articleTitle")
 .patch(function(req, res){
   console.log(req.body);
   Article.updateOne(
-    {_id: req.params.articleTitle},
+    {_id: req.params.ID},
     {$set: req.body},
     
     function(err){
@@ -127,7 +117,7 @@ app.route("/articles/:articleTitle")
 .delete(function(req, res){
 
   Article.deleteOne(
-    {_id: req.params.articleTitle},
+    {_id: req.params.ID},
     function(err){
       if (!err){
         res.send("Successfully deleted the corresponding article.");
